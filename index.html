@@ -1,0 +1,266 @@
+<HTML>
+<head>
+</div>
+    <style>
+      html, body, #map {
+        height: 400px;
+        width:100%;
+        margin: 0;
+        padding: 0;
+      }
+      .center{
+        text-align :center;
+        padding: 20px;
+        padding-top: 0%;
+      }
+
+      </style>
+      </head>
+<body>
+     
+    <div class="center">
+        <select id="pages"  onchange="zoompin(this.value)">
+        </select>
+ 
+    </div>
+<!-- Here is good dropdown UI by tracy -->
+
+ <!-- /* ===== Logic for creating fake Select Boxes ===== */-->
+<!-- 
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+ <script>
+
+
+
+// https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false
+// //code.jquery.com/jquery-1.11.0.min.js
+
+
+// The JSON data
+var json = [
+  {
+    "id": 1,
+    "stops": "Nanakhedi",
+    "Laty": 24.57017620000005,
+    "Lngy": 77.27052500000008
+  },
+  {
+    "id": 2,
+    "stops": "Mandi Gate",
+    "Laty": 24.6626586000,
+    "Lngy": 77.3272501,
+  },
+  {
+    "id": 3,
+    "stops": "Hanuman Chouraha",
+    "Laty": 24.66265860000004,
+    "Lngy": 77.32725010000007
+  },
+  {
+    "id": 4,
+    "stops": "Jai Stambh Chouraha",
+    "Laty": 24.64799390000007,
+    "Lngy": 77.31799080000008
+  },
+  {
+    "id": 5,
+    "stops": "Bus Stand Jajji",
+    "Laty": 24.64480690000005,
+    "Lngy": 77.30981700000007
+  },
+  {
+    "id": 6,
+    "stops": "Modal Town Chouraha",
+    "Laty": 24.64276630000006,
+    "Lngy": 77.30622730000005
+  },
+  {
+    "id": 7,
+    "stops": "Maruti Showroom",
+    "Laty": 24.63873140000004,
+    "Lngy": 77.29901510000008
+  },
+  {
+    "id": 8,
+    "stops": "Chinta haran Mandir",
+    "Laty": 24.63352880000008,
+    "Lngy": 77.29163100000005
+  },
+  {
+    "id": 9,
+    "stops": "Tekari",
+    "Laty": 24.64929260000002,
+    "Lngy": 77.31525590000007
+  },
+  {
+    "id": 10,
+    "stops": "Friends Colony",
+    "Laty": 24.66409160000006,
+    "Lngy": 77.28932830000008
+  },
+  {
+    "id": 11,
+    "stops": "Vivek Colony",
+    "Laty": 24.64751340000004,
+    "Lngy": 77.34177640000007
+  },
+  {
+    "id": 12,
+    "stops": "Cantt Chouraha",
+    "Laty": 24.64786550000002,
+    "Lngy": 77.34721700000006
+  },
+  {
+    "id": 13,
+    "stops": "Railway Station",
+    "Laty": 24.62216750000005,
+    "Lngy": 77.30469470000008
+  },
+  {
+    "id": 14,
+    "stops": "Krishna Nagar",
+    "Laty": 24.64123040000004,
+    "Lngy": 77.30915990000005
+  },
+  {
+    "id": 15,
+    "stops": "Haddi Mill",
+    "Laty": 24.64735500000006,
+    "Lngy": 77.33330160000008
+  },
+  {
+    "id": 16,
+    "stops": "Bees Bhuji Mata Mandir",
+    "Laty": 24.63426800000008,
+    "Lngy": 77.30746270000003
+  },
+  {
+    "id": 17,
+    "stops": "Bajarnagarh",
+    "Laty": 24.66828080000005,
+    "Lngy": 77.33107280000007
+  },
+  {
+    "id": 18,
+    "stops": "Singwasa",
+    "Laty": 24.58000640000006,
+    "Lngy": 77.28186740000007
+  }
+];
+
+var markers = [];
+var map;
+
+function init() {
+  var pos;
+
+   // Try HTML5 geolocation.
+   if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+    pos = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+        var marker2 = new google.maps.Marker({
+          position:pos,
+          animation: google.maps.Animation.DROP,
+          map: map,
+          icon: src='currentlocation.png'
+        });
+    
+    });
+//  console.log(position)
+  }
+
+
+  // Giving the map som options
+  var mapOptions = {
+    zoom:13,
+center: new google.maps.LatLng(24.64929,77.31525),
+ 
+    mapTypeId : google.maps.MapTypeId.ROADMAP
+  };
+  
+  // Creating the map
+  map = new google.maps.Map(document.getElementById('map'), mapOptions);
+  // var GeoMarker = new GeolocationMarker(map);
+
+  
+  // Looping through all the entries from the JSON data
+  for(var i = 0; i < json.length; i++) {
+    
+    // Current object
+    var obj = json[i];
+    var latlong = {lat: obj.Laty, lng: obj.Lngy};
+    // Adding a new marker for the object
+    markers[i] = new google.maps.Marker({
+      
+      // position: new google.maps.LatLng(obj.Laty,obj.Lngy),
+
+      position: latlong,
+      animation: google.maps.Animation.DROP,
+      map: map,
+      //title: obj.title // this works, giving the marker a title with the correct title
+      title: obj.stops
+    });
+ 
+    google.maps.event.addListener(markers[i], 'click', function(marker,i) {
+      return function() {
+       // set the infowindow content for this marker (the function has closure on i)
+       infowindow.setContent(marker.title);
+       // open the infowindow on this marker (the function has closure on marker)
+       infowindow.open(map, marker);
+     }}(markers[i],i));
+
+
+
+
+    // Adding a new info window for the object
+    // var clicker = addClicker(marker, obj.content);
+    
+      // Adding a new click event listener for the object
+  } // end loop
+
+  
+  var infowindow = new google.maps.InfoWindow({
+    content: "obj.stops"
+  });
+  
+
+
+}
+
+function zoompin(id) {
+  console.log(id);
+  var id1 = id;
+  for(var i = 0; i < json.length; i++) {
+    var obj = json[i];
+    var pos = {lat:obj.Laty,lng:obj.Lngy}
+
+  var markerzoom = new google.maps.Marker({
+    position: pos,
+    animation: google.maps.Animation.DROP
+  });
+
+    var id2 = json[i].id;
+    if(id1==id2){
+ 
+ // console.log(markerzoom)
+      map.setZoom(18);
+      map.setCenter(markerzoom.position);
+      };
+    }}
+
+
+var html = '<option value="">Select Stop</option>'
+    for (i=0;i<json.length;i++){
+      html += '<option value="'+json[i].id+'" id="'+i+'">'+json[i].stops+'</option>'
+    }
+
+document.getElementById("pages").innerHTML = html;</script>
+
+
+<div id="map"></div>
+<script src="script.js"></script>
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBp0CnLcgNt0OE4DC07_7zShdtDbYq7oto&callback=init">
+    </script>
+</body>
+</html>
